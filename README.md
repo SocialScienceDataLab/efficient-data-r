@@ -1,7 +1,7 @@
 # Efficient Data Managent with R
 
 ### Abstract
-The software environment R is widely used for data analysis and data visualization in the social sciences and beyond. Additionally, it is becoming increasingly popular as a tool for data and file management. Focusing on these latter aspects, this workshop by [Denis Cohen](https://twitter.com/denis_cohen), [Cosima Meyer](https://twitter.com/cosima_meyer), [Marcel Neunhoeffer](https://twitter.com/mneunho), [Oliver Rittmann](https://gess.uni-mannheim.de/doctoral-programs/social-and-behavioral-sciences-cdss/students/people/show/oliver-rittmann.html) illustrates the workflow and best practices for efficient data management in R.
+The software environment R is widely used for data analysis and data visualization in the social sciences and beyond. Additionally, it is becoming increasingly popular as a tool for data and file management. Focusing on these latter aspects, this workshop by [Denis Cohen](https://twitter.com/denis_cohen), [Cosima Meyer](https://twitter.com/cosima_meyer), [Marcel Neunhoeffer](https://twitter.com/mneunho), and [Oliver Rittmann](https://gess.uni-mannheim.de/doctoral-programs/social-and-behavioral-sciences-cdss/students/people/show/oliver-rittmann.html) illustrates the workflow and best practices for efficient data management in R.
 
 Participants will learn about:
 
