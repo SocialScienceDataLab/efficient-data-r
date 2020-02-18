@@ -1,0 +1,90 @@
+---
+title: "Report on Efficient Data Management in R"
+author: "Denis Cohen, Cosima Meyer, Marcel Neunhoeffer & Oliver Rittmann"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+## Save package names as a vector of strings
+pkgs <-
+  c(
+    "foreign",         ### read data stored in various formats
+    "readstata13",     ### read data stored by Stata 13-16
+    "reshape2",        ### flexibly reshape data
+    "countrycode",     ### convert country names and country codes
+    "lubridate",       ### dates and time
+    "dplyr",           ### tools for data manipulation
+    "magrittr",        ### piping operations
+    "tidyr",           ### tool to deal with messy data (and get "tidy data")
+    "ggplot2",         ### data visualization using a grammar of graphics
+    "fabricatr",       ### imagine your data before you collect it  
+    "knitr"
+  )
+
+## Install uninstalled packages
+lapply(pkgs[!(pkgs %in% installed.packages())], install.packages)
+
+## Load all packages to library and adjust options
+lapply(pkgs, library, character.only = TRUE)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r Load Data and do Inference}
+load(file = "../processed-data/ess-proc.RData")
+
+
+##### Working with the data
+
+## ----inference----------------------------------------------
+ess_est <- ess %>%
+  mutate(v_center_left = (v_center_left == "Yes")) %>%
+  group_split(cntry) %>%
+  lapply(function(dat) {
+    mod <- glm(v_center_left ~ uemp5yr,
+               data = dat,
+               weights = dweight)
+    pred <- predict(mod,
+                    newdata = data.frame(uemp5yr = "Yes"),
+                    se.fit = TRUE)
+    pos_welfare <- unique(dat$welfare)
+    output <- data.frame(
+      est = pred$fit, 
+      lower95 = pred$fit + qnorm(.025) * pred$se,
+      upper95 = pred$fit + qnorm(.975) * pred$se,
+      welfare = unique(dat$welfare)
+    )
+    return(output)
+  }) %>%
+  bind_rows()
+```
+
+In this code chunk we load our data set and do inference.
+
+## Including Plots
+
+Finally, we also want to produce and include a plot to our manuscript. We will also save the plot to the figures folder. So we could reuse the plot e.g. in a presentation.  
+
+```{r Plot, echo=FALSE, warning=FALSE}
+ess_est %>%
+  ggplot(aes(x = welfare, y = est)) +
+  geom_errorbar(aes(ymin = lower95, ymax = upper95)) + 
+  geom_point() + 
+  labs(x = "Center Left Welfare Policy Position",
+       y = "Proportion of Unemployed Voting for Center Left")
+
+ggsave("../figures/Figure1.png", height = 9, width = 16)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
